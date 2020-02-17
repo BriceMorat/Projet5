@@ -1,0 +1,242 @@
+@keyframes slideMapImagesAnimation {
+	0% {
+    	transform: translateX(0%);
+  }
+  	100% {
+    	transform: translateX(-100%);
+  }
+}
+
+body {
+	background-image: url(../img/bg-img);
+	background-attachment: fixed;
+}
+
+header h1, header .h1 {
+	z-index: 1;
+	font-family: 'Playball';
+}
+
+header nav img {
+	width: 30px;
+	height: 30px;
+}
+
+.btn {
+	background-color: #008000 !important;
+}
+
+#postModal {
+	display: none;
+}
+
+.comment {
+	word-wrap: break-word;
+}
+
+.table {
+	table-layout: fixed;
+}
+
+/*---- PostView ---- */
+.postImagesContainer, .postImagesFigure {
+	height: 80vh;
+}
+
+.postImagesDiv {
+	height: 60vh;
+}
+
+.postImagesFigcaption p {
+	height: 10vh;
+}
+
+/*---- MapView ---- */
+
+#map2, .markerImagesContainer, .markerImagesFigure {
+	height: 65vh;
+}
+
+.markerImagesDiv {
+	height: 45vh;
+}
+
+.markerImagesFigcaption, .sliderMapImagesFigcaption, .postImagesFigcaption {
+	height: 20vh;
+}
+
+.markerImagesFigcaption p {
+	height: 5vh;
+}
+
+.autoSlideImagesDiv {
+	height: 40vh;
+}
+
+.sliderMapImagesContainer, .sliderMapImagesFigure {
+	height: 100vh;
+}
+
+.sliderMapImagesDiv {
+	height: 80vh;
+}
+
+.sliderMapImagesFigcaption p {
+	height: calc(20vh/3);
+}
+
+.markerImagesContainer img, .autoSlideImagesContainer img, .sliderMapImagesContainer img, .postImagesContainer img {
+	min-width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#map2, #map1, #container, .carousel-inner, .btn, figure, figcaption, .autoSlideImagesDiv img, .mdb-lightbox {
+	border-radius: 7px;
+}
+
+.latRec, .lngRec, #lat, #lng, .sliderMapImages, #city, .imagesContainer {
+	display: none;
+}
+
+.markerImagesFigure {
+	visibility: hidden;
+	cursor: zoom-in;
+}
+
+.markerImagesFigcaption, .sliderMapImagesFigcaption, .autoSlideImagesFigcaption, .sliderMapImagesFigure, .postImagesFigure, .postImagesFigcaption {
+	opacity: 0;
+	transition: opacity 0.5s ease-in-out;
+}
+
+.markerImagesFigure:hover figcaption, .sliderMapImagesContainer:hover figcaption, .autoSlideImagesFigure:hover figcaption, .postImagesContainer:hover figcaption {
+	opacity: 1;
+	transition: opacity 0.5s ease-in-out;
+}
+
+.zoomed {
+	z-index: 1000;
+	transform: scale(1.3) translate(calc(-100vh/6), 7em);
+	transition: 0.5s ease-in-out;	
+}
+
+.zoomed2 {
+	z-index: 1000;
+	transform: scale(1.3);
+	transition: 0.5s ease-in-out;	
+}
+
+#prev-btn, #next-btn {
+	cursor: pointer;
+}
+
+#next-btn {
+	float: right;
+}
+
+#prev-btn {
+	float: left;
+}
+
+#prevNextBtn {
+	position: relative;
+	bottom: 42vh;
+}
+
+#prevNextDiv {
+	position: relative;
+	bottom: 31vh;
+}
+
+.fa-play-circle {
+	left: 0.6em;
+	transition: 100ms all ease;
+  	cursor: pointer;
+}
+
+.fa-pause-circle {
+	right: 0.6em;
+	transition: 100ms all ease;
+  	cursor: pointer;
+}
+
+.button:hover {
+	border-color: transparent transparent transparent #404040;
+}
+
+/*---- CreatePostView ---- */
+#map1 {
+    min-height: 30vh;
+}
+
+#city {
+	width: 33.5em;
+}
+
+.visibility {
+	visibility: hidden;
+}
+
+/*MEDIA QUERIES*/
+@media all and (min-width: 768px) and (max-width: 991px) {
+	.markerImagesContainer {
+		padding: 0 !important;
+		margin-top: 2em;
+	}
+}
+
+
+@media all and (max-width: 768px) {
+
+	.autoSlideImagesContainer, .sliderReturnBtn {
+		display: none;
+	}
+
+	.sliderMapImages {
+		display: block;
+	}
+
+	.markerImagesContainer {
+		padding: 0 !important;
+		margin-top: 2em;
+	}
+
+	.adminSection h2, .adminSection h3, .writePost, .card-body, section, p, h2, h3, label, form, form input, .form-group, .text-md-right {
+		text-align: center;	
+	}
+
+	thead tr {
+		display: none;
+	}
+
+	tbody tr, .nav-pills {
+		display: flex;
+		flex-direction: column;
+		text-align: center;
+	}
+
+	tbody .text-right {
+		margin: 0 auto;
+	}
+
+	figcaption p {
+		font-size: 1em !important;
+	}
+
+/*	.alert-btn {
+		justify-content: center;
+		display: flex;
+	}
+
+	.send-btn {
+		display: block;
+		margin: 0 auto;
+	}*/
+
+	.g-recaptcha {
+		margin-top: 2em;
+	}
+
+}
+
+ 
