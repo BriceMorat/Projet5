@@ -8,7 +8,6 @@ use Projet5\Model\ReportManager;
 use Projet5\Model\Pagination;
 use Projet5\Model\latLngManager;
 
-
 require_once('Controller.php');
 
 
@@ -31,14 +30,13 @@ class FrontofficeController {
 		$postsNb = $pagination->getPostsPagination();
 		$pageNb = $pagination->getPostsPages($postsNb, $postsPerPage);
 
-		if (!isset($_GET['page'])) {
+		if (!isset($_GET['page'])):
 			$currentPage = 0;
-		} elseif (isset($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $pageNb) {
+		elseif (isset($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $pageNb):
 			$currentPage = (intval($_GET['page']) - 1) * $postsPerPage;
-		}
+		endif;
 
 		$posts = $postManager->getPosts($currentPage, $postsPerPage);
-
 
 		require('view/frontoffice/homeView.php');
 	}
@@ -54,7 +52,7 @@ class FrontofficeController {
 		$post = $postManager->getPost($_GET['id']);
 
 
-		if ($post) {
+		if ($post):
 			$postImages = $imageManager->getPostImages($_GET['id']);
 
 			$comments = $commentManager->getComments($_GET['id']);
@@ -62,12 +60,14 @@ class FrontofficeController {
 			$recentPosts = $postManager->getRecentPosts();
 
 
-			if (!empty($_SESSION)) {
+			if (!empty($_SESSION)):
 				$idComment = $reportManager->getIdReport($_SESSION['id']);
-			}
-		} else {
+			endif;
+
+		else:
 			header('Location: index.php');
-		}
+
+		endif;
 		
 		require('view/frontoffice/postView.php');
 	}
@@ -80,12 +80,13 @@ class FrontofficeController {
 
 		$member = $memberManager->getMember($_GET['authorId']);
 
-		if ($userPostImages) {
+		if ($userPostImages):
 			$userPostImages = $imageManager->getUserPostImages($_GET['authorId']);
 
-		} else {
+		else:
 			header('Location: index.php');
-		}
+
+		endif;
 
 		require('view/frontoffice/userPostImagesView.php');
 	}
@@ -100,6 +101,7 @@ class FrontofficeController {
 		$sliderMapImages = $imageManager->getSliderMapImages();
 
 		$nbImgLikes = $imageManager->getNbImgLikes();
+		
 
 		require('view/frontoffice/mapView.php');	
 	}
@@ -107,7 +109,6 @@ class FrontofficeController {
 	public function displayRegistration() {
 		require('view/frontoffice/registrationView.php');
 	}
-
 
 	/**
 
@@ -127,19 +128,38 @@ class FrontofficeController {
 			$usernameValidity = $memberManager->checkPseudo($pseudo);
 			$emailValidity = $memberManager->checkEmail($email);
 
-			if (!$usernameValidity && !$emailValidity) {
-				$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+			if(filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)):
+				if ($_POST['password'] === $_POST['password_confirm']):
 
-				$newMember = $memberManager->createMember($pseudo, $password, $email);
+					if (!$usernameValidity && !$emailValidity):
+						Controller::valid_data($pseudo);
+						Controller::valid_data($password);
+						Controller::valid_data($email);
 
-				header('Location: index.php?account-status=account-successfully-created');
+						$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-			} elseif ($usernameValidity) {
-				header('Location: index.php?action=registration&error=invalidUsername');
+						$newMember = $memberManager->createMember($pseudo, $password, $email);
 
-			} elseif ($emailValidity) {
-				header('Location: index.php?action=registration&error=invalidEmail');
-			}
+						header('Location: index.php?account-status=account-successfully-created');
+
+					elseif ($usernameValidity):
+						header('Location: index.php?action=registration&error=invalidUsername');
+
+					elseif ($emailValidity):
+						header('Location: index.php?action=registration&error=invalidEmail');
+
+					endif;
+						
+				else:
+					throw new Exception('Les deux mots de passe ne correspondent pas.');
+
+				endif;
+
+			else:
+				throw new Exception('Adresse email non valide.');
+
+			endif;
+
 		} else {
 			header('Location: index.php?action=registration&error=google-recaptcha');
 		}
@@ -155,8 +175,6 @@ class FrontofficeController {
 
 	* @param $pseudo string
 
-	* @param $email string
-
 	* @param $password string
 
 	**/
@@ -165,19 +183,23 @@ class FrontofficeController {
 
 		$member = $memberManager->loginMember($pseudo);
 
+		Controller::valid_data($pseudo);
+		Controller::valid_data($password);
+
 		$isPasswordCorrect = password_verify($_POST['password'], $member['password']);
 
-		if (!$member) {
+		if (!$member):
 			header('Location: index.php?action=login&account-status=unsuccess-login');
-		} elseif ($isPasswordCorrect) {
+		elseif ($isPasswordCorrect):
 			$_SESSION['id'] = $member['id'];
 			$_SESSION['pseudo'] = ucfirst(strtolower($pseudo));
 			$_SESSION['role'] = $member['role'];
 			$_SESSION['email'] = $member['email'];
 			header('Location: index.php');
-		} else {
+		else:
 			header('Location: index.php?action=login&account-status=unsuccess-login');
-		}
+
+		endif;
 	}
 
 	/**
@@ -192,13 +214,16 @@ class FrontofficeController {
 	public function addComment(int $postId, string $author, string $content) {
 		$commentManager = new CommentManager();
 
+		Controller::valid_data($_POST['content']);
+
 		$affectedLines = $commentManager->addComments($postId, $author, $content);
 
-		if ($affectedLines === false) {
+		if ($affectedLines === false):
 			throw new Exception("Impossible d'ajouter le commentaire !");
-		} else {
+		else:
 			header('Location: index.php?action=post&id=' . $postId);
-		}
+		
+		endif;
 	}
 
 	/**

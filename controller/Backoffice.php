@@ -9,7 +9,6 @@ use Projet5\Model\ReportManager;
 use Projet5\Model\Pagination;
 use Projet5\Model\LatLngManager;
 
-
 require_once('Controller.php');
 
 
@@ -25,13 +24,13 @@ class BackofficeController extends Controller {
 
 	/**
 
-	* @param $author_id integer
+	* @param $authorId integer
 
 	**/
-	public function listPostsByUser(int $author_id) {
+	public function listPostsByUser(int $authorId) {
 		$postManager = new PostManager();
 
-		$postsByUser = $postManager->getPostsByUser($author_id);
+		$postsByUser = $postManager->getPostsByUser($authorId);
 		
 		require('view/backoffice/dashBoardView.php');
 	}
@@ -42,7 +41,6 @@ class BackofficeController extends Controller {
 
 	public function displayAdmin() {
 		$postManager = new PostManager();
-		$imageManager = new ImageManager();
 		$reportManager = new ReportManager();
 		$memberManager = new MemberManager();
 		$pagination = new Pagination();
@@ -52,15 +50,14 @@ class BackofficeController extends Controller {
 		$postsNb = $pagination->getPostsPagination();
 		$pageNb = $pagination->getPostsPages($postsNb, $postsPerPage);
 
-		if (!isset($_GET['page'])) {
+		if (!isset($_GET['page'])):
 			$currentPage = 0;
-		} elseif (isset($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $pageNb) {
+		elseif (isset($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $pageNb):
 			$currentPage = (intval($_GET['page']) - 1) * $postsPerPage;
-		}
+		
+		endif;
 
 		$posts = $postManager->getPosts($currentPage, $postsPerPage);
-
-		$images = $imageManager->getImages();
 
 		$reports = $reportManager->getReports();
 
@@ -79,15 +76,20 @@ class BackofficeController extends Controller {
 
 	* @param $content string
 
-	* @param $author_id integer
+	* @param $authorId integer
 
 	* @param $author string
 
 	**/
-	public function newPost(string $title, string $country, string $city, string $content, int $author_id, string $author) {
+	public function newPost(string $title, string $country, string $city, string $content, int $authorId, string $author) {
 		$postManager = new PostManager();
 
-		$newPost = $postManager->createPost($title, $country, $city, $content, $author_id, $author);
+		Controller::valid_data($_POST['title']);
+		Controller::valid_data($_POST['country']);
+		Controller::valid_data($_POST['city']);
+		Controller::valid_data($_POST['content']);
+
+		$newPost = $postManager->createPost($title, $country, $city, $content, $authorId, $author);
 
 		header('Location: index.php?action=dashBoard&new-post=success');
 	}
@@ -95,30 +97,33 @@ class BackofficeController extends Controller {
 
 	/**
 
-	* @param $filename string
+	* @param $authorId integer
+
+	* @param $filenames array
 
 	**/
-	public function newImage(int $author_id, $filename) {
+	public function newImage(int $authorId, array $filenames) {
 
 		$imageManager = new ImageManager();
 
- 		$countfiles = count($_FILES['userFiles']['name']);
+ 		$countFiles = count($filenames);
 
- 		for ($i=0; $i<$countfiles; $i++) {
-  			$filename = $_FILES['userFiles']['name'][$i];
+ 		for ($i=0; $i<$countFiles; $i++):
+  			$filename = $filenames[$i];
 
 			$imageFileType = strtolower(pathinfo('public/upload_img/'.$filename, PATHINFO_EXTENSION));
 
-  			$extensions_arr = array("jpg","jpeg","png");
+  			$extensions = ["jpg","jpeg","png"];
 
-  			if (in_array($imageFileType, $extensions_arr)) {
-
-  				$newImage = $imageManager->addImage($author_id, $filename);
+  			if (in_array($imageFileType, $extensions)):
 
   				move_uploaded_file($_FILES['userFiles']['tmp_name'][$i], 'public/upload_img/'.$filename);
-  			}
- 		}
 
+  				$newImage = $imageManager->addImage($authorId, $filename);
+
+  			endif;
+
+ 		endfor;
   	}
 
 	/**
@@ -142,29 +147,28 @@ class BackofficeController extends Controller {
   	public function updatePassword(string $psw) {
 		$memberManager = new MemberManager();
 
-		// $reCaptcha = $memberManager->getReCaptcha($_POST['g-recaptcha-response']);
+		if ($_POST['psw'] === $_POST['psw_confirm']):
 
-		// if ($reCaptcha->success == true) {
-			
-		$psw = password_hash($_POST['psw'], PASSWORD_DEFAULT);
+			Controller::valid_data($_POST['psw']);
+			$psw = password_hash($_POST['psw'], PASSWORD_DEFAULT);
 
-		$updatedPsw = $memberManager->updateMemberPsw($psw);
+			$updatedPsw = $memberManager->updateMemberPsw($psw);
 
-		header('Location: index.php?action=dashBoard&password-successfully-updated');
+			header('Location: index.php?action=dashBoard&password-successfully-updated');
 
-		
-		// } else {
-		// 	header('Location: index.php?action=registration&error=google-recaptcha');
-		// }
+		else:
+			throw new Exception('Les deux mots de passe ne correspondent pas.');
+					
+		endif;
 	}
-
-
-
 
 	public function displayUpdatePost() {
 		$postManager = new PostManager();
+		$imageManager = new ImageManager();
 
 		$post = $postManager->getPost($_GET['id']);
+		$postImages = $imageManager->getPostImages($_GET['id']);
+		$userImages = $imageManager->getUserImages($_GET['id']);
 
 		require('view/backoffice/updatePostView.php');
 	}
@@ -181,6 +185,9 @@ class BackofficeController extends Controller {
 	public function submitUpdatePost(string $title, string $content, int $postId) {
 		$postManager = new PostManager();
 
+		Controller::valid_data($_POST['title']);
+		Controller::valid_data($_POST['content']);
+
 		$updatedPost = $postManager->updatePost($title, $content, $postId);
 
 		header('Location: index.php?action=dashBoard&update-post=success');
@@ -190,28 +197,32 @@ class BackofficeController extends Controller {
 
 	* @param $postId integer
 
-	* @param $filename string
+	* @param $authorId integer
+
+	* @param $filenames array
 
 	**/
-	public function submitUpdateImage($filename, $postId) {
+	public function submitUpdateImage(int $postId, int $authorId, array $filenames) {
 		$imageManager = new ImageManager();
 
- 		$countfiles = count($_FILES['userFiles']['name']);
+ 		$countFiles = count($filenames);
 
- 		for ($i=0; $i<$countfiles; $i++) {
-  			$filename = $_FILES['userFiles']['name'][$i];
+ 		for ($i=0; $i<$countFiles; $i++):
+  			$filename = $filenames[$i];
 
-			$imageFileType = strtolower(pathinfo('public/img/'.$filename, PATHINFO_EXTENSION));
+			$imageFileType = strtolower(pathinfo('public/upload_img/'.$filename, PATHINFO_EXTENSION));
 
-  			$extensions_arr = array("jpg","jpeg","png","gif");
+  			$extensions = ["jpg","jpeg","png"];
 
-  			if (in_array($imageFileType, $extensions_arr)) {
+  			if (in_array($imageFileType, $extensions)):
 
-  				$updatedImage = $imageManager->updateImage($filename, $postId);
+  				move_uploaded_file($_FILES['userFiles']['tmp_name'][$i], 'public/upload_img/'.$filename);
 
-  				move_uploaded_file($_FILES['userFiles']['tmp_name'][$i], 'public/img/'.$filename);
-  			}
- 		}
+  				$updatedImage = $imageManager->updateImage($postId, $authorId, $filename);
+
+  			endif;
+ 		
+ 		endfor;
 	}
 
 	/**
@@ -221,7 +232,7 @@ class BackofficeController extends Controller {
 	* @param $userId integer
 
 	**/
-	public function addImgLikes($imageId, $userId) {
+	public function addImgLikes(int $imageId, int $userId) {
 		$imageManager = new ImageManager();
 		
 		$nbLikedImg = $imageManager->recordImageLikes($imageId, $userId);
@@ -238,7 +249,28 @@ class BackofficeController extends Controller {
 
 		$deletedPost = $postManager->deletePost($postId);
 
-		header('Location: index.php?action=remove-post=success');
+		if ($_SESSION['role'] === admin):
+			header('Location: index.php?action=admin&remove-post=success');
+		
+		else:
+			header('Location: index.php?action=dashBoard&remove-post=success');
+
+		endif;
+	}
+
+	/**
+
+	* @param $postId integer
+
+	* @param $imageId integer
+
+	**/
+	public function removeImage(int $postId, int $imageId) {
+		$imageManager = new ImageManager();
+
+		$deletedImage = $imageManager->deleteImage($imageId);
+
+		header('Location: index.php?action=updatePost&id='.$postId.'&imageId='.$imageId.'&remove-image=success');
 	}
 
 	/**
