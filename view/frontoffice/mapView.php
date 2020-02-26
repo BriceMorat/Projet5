@@ -6,43 +6,34 @@
    	<div class="d-lg-flex">
 	    <div id="map2" class="col-xs-12 col-lg-6 border border-dark"></div>
 
-	    <?php  
-		while ($data = $latLngList->fetch()) {
+	    <?php while ($data = $latLngList->fetch()):
 
 			$lat = $data['lat'];
 			$lng = $data['lng'];
 		?>
 			<p class="latRec"><?= json_encode($lat, JSON_NUMERIC_CHECK); ?></p>		
 			<p class="lngRec"><?= json_encode($lng, JSON_NUMERIC_CHECK); ?></p>	
-		<?php
-		}
-		?>
+
+		<?php endwhile; ?>
 
 		<div class="markerImagesContainer col-xs-12 col-lg-6 position-relative">               
-			<?php while ($markerImage = $markerImages->fetch()) {
-			?>
+			<?php while ($markerImage = $markerImages->fetch()): ?>
 				
-
 			<figure class="markerImagesFigure position-absolute bg-dark w-100 mb-0">
 				<div class="markerImagesDiv overflow-hidden px-4 pt-4">
 	        		<img class="img-fluid" src="public/upload_img/<?= $markerImage['file_name']; ?>" alt="image">
 	        	</div>
 	        	<figcaption class="markerImagesFigcaption text-center text-white font-weight-bold position-relative">
-	        		<p class="h4 mb-0"><?= $markerImage['title']; ?>
-	        		<p class="h5 mb-0"><?= $markerImage['country'].', <em class="h6">'.$markerImage['city']; ?></em></p>
-	        		<p class="mb-0"><?= $markerImage['author']; ?></p>
+	        		<p class="h4 mb-0"><?= htmlspecialchars_decode($markerImage['title']); ?>
+	        		<p class="h5 mb-0"><?= htmlspecialchars_decode($markerImage['country']).', <em class="h6">'.htmlspecialchars_decode($markerImage['city']); ?></em></p>
+	        		<p class="mb-0"><?= htmlspecialchars_decode($markerImage['author']); ?></p>
 					
-					<p class="mb-0"><a href="index.php?action=map&image=<?= $markerImage['id']; ?>"><i class="fa fa-thumbs-up"></i></a></p>
+					<p class="mb-0"><a href="index.php?action=map&image=<?= $markerImage['id']; ?>"><i class="fa fa-thumbs-up fa-2x"></i></a></p>
 
 	        	</figcaption>
 	      	</figure>
 
-			<?php
-			}
-	        ?>
-
-
-		
+			<?php endwhile; ?>
 		</div>
 	</div>
 
@@ -60,27 +51,23 @@
 	<div class="row">
 		<div class="col-md-12">
 
-			<div id="mdb-lightbox-ui"></div>
+			<div class="likedImagesContainer bg-dark mdb-lightbox d-flex flex-wrap py-4 px-2">
 
-			<div class="bg-dark mdb-lightbox d-flex flex-wrap py-4 px-2">
+			    <?php while ($nbImgLike = $nbImgLikes->fetch()): ?>
 
-			    <?php while ($nbImgLike = $nbImgLikes->fetch()) {
-				?>
-
-				<figure class="col-md-4">
-					
-			    	<img class="img-fluid" src="public/upload_img/<?= $nbImgLike['file_name']; ?>" alt="image">
+				<figure class="likedImagesFigure col-md-4">
+					<div class="likedImagesDiv">
+			    		<img class="img-fluid" src="public/upload_img/<?= $nbImgLike['file_name']; ?>" alt="image">
+			    	</div>
 			    	
-			    	<figcaption class="text-center text-white font-weight-bold">
+			    	<figcaption class="likedImagesFigcaption text-center text-white font-weight-bold">
 			    	
 						<p><i class="fa fa-thumbs-up"></i> <?= $nbImgLike['img_likes']; ?></p>
 
 			    	</figcaption>
 			  	</figure>
 				
-				<?php
-				}
-			    ?>
+				<?php endwhile; ?>
 
 			</div>
 	  	</div>
@@ -94,24 +81,21 @@
 	<div>
 		<div class="col-md-12 overflow-hidden">
 		   
-		    <div class="d-flex flex-row">
-			<?php while ($autoSliderMapImage = $autoSliderMapImages->fetch()) {
-			?>
+		    <div id="autoSlideImages" class="d-flex flex-row">
+			<?php while ($autoSliderMapImage = $autoSliderMapImages->fetch()): ?>
 		
 		      	<figure class="autoSlideImagesFigure col-md-3 mx-4 bg-dark">
 		      		<div class="autoSlideImagesDiv my-4">
 		        		<img class="img-fluid" src="public/upload_img/<?= $autoSliderMapImage['file_name']; ?>" alt="image">
 		        	</div>
-		        	<figcaption class="text-center text-white font-weight-bold mb-4">
+		        	<figcaption class="autoSlideImagesFigcaption text-center text-white font-weight-bold mb-4">
 		        		<p class="mb-1 h6"><?= $autoSliderMapImage['title']; ?>
 		            	<p class="mb-1"><?= $autoSliderMapImage['country'].', <em>'.$autoSliderMapImage['author']; ?></em></p>
 
 		      		</figcaption>
 		      	</figure>
 
-		  	<?php
-		  	}
-		  	?>
+		  	<?php endwhile; ?>
 		    </div>
 
 			<div id="playPauseBtn" class="mx-auto text-center pb-2">
@@ -129,12 +113,10 @@
 
 <section id="container" class="jumbotron border border-dark col-11 mx-auto pb-4 sliderMapImages">
 
-	 
     <div class="sliderMapImagesContainer position-relative">
 
-  		<?php while ($sliderMapImage = $sliderMapImages->fetch()) {
+  		<?php while ($sliderMapImage = $sliderMapImages->fetch()): ?>
 
-  		?>
           	<figure class="sliderMapImagesFigure bg-dark position-absolute w-100">
       			<div class="sliderMapImagesDiv overflow-hidden px-5 pt-4">
         			<img class="img-fluid" src="public/upload_img/<?= $sliderMapImage['file_name']; ?>" alt="image">
@@ -149,13 +131,10 @@
         			<p class="h4 mb-0"><?= $sliderMapImage['title']; ?>
             		<p class="h5 mb-0"><?= $sliderMapImage['country'].', <em class="h6">'.$sliderMapImage['city']; ?></em></p>
             		<p class="mb-0"><?= $sliderMapImage['author']; ?></p>
-
       			</figcaption>
             </figure>
 
-		<?php
-		}
-		?>
+		<?php endwhile; ?>
 
 	</div>
 
@@ -164,13 +143,11 @@
 	</div>
 </section>
 
-
-
 <?php $content = ob_get_clean(); ?>
 
 <?php require('template.php'); ?>
 
-<script type="text/javascript" src="public/js/initMap2.js"></script>
-<script type="text/javascript" src="public/js/initMapSlider.js"></script>
+<script type="text/javascript" src="public/js/init/initMap2.js"></script>
+<script type="text/javascript" src="public/js/init/initMapSlider.js"></script>
 
 

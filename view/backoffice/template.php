@@ -37,9 +37,9 @@
 			<nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
 
 				<?php 
-					if (!empty($_SESSION) && $_SESSION['role'] === 'admin') {
+					if (!empty($_SESSION) && $_SESSION['role'] === 'admin'):
 			      		echo '<ul class="nav nav-pills"><li class="nav-item"><a class="nav-link" href="index.php?action=admin"><img src="public/img/traveler-person-icon" class="mr-2"></img>Administration</a></li></ul>';
-			      	} 
+			    	endif;
 				?>
 
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -58,18 +58,16 @@
 		        			<a class="nav-link" href="index.php?action=map">Carte</a>
 		      			</li>
 
-
 		      			<?php
-			      			if (!empty($_SESSION)) {
+			      			if (!empty($_SESSION)):
 			      				echo '<li class="nav-item"><a class="nav-link" href="index.php?action=dashBoard"><i class="fas fa-user"></i> ' . htmlspecialchars($_SESSION['pseudo']) . '</a></li>';
-			      			}
-			      			if (!empty($_SESSION)) {
 			      				echo '<li class="nav-item"><a class="nav-link" href="index.php?action=logout">Déconnexion</a></li>';
-			      			} 
-			      			else {
+			      	 
+			      			else:
 			      				echo '<li class="nav-item"><a class="nav-link" href="index.php?action=login">Se connecter</a></li>';
 			      				echo '<li class="nav-item"><a class="nav-link" href="index.php?action=registration">S\'inscrire</a></li>';
-			      			}
+
+			      			endif;
 		      			?>
 
 		    		</ul>
@@ -81,7 +79,7 @@
 
 		<!-- Tiny MCE -->
 		<script src="https://cdn.tiny.cloud/1/awbrpbrntn6dluij2xowqpbazd9pmf2lnlwc90vrn1t6081t/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-  		<script>tinymce.init({selector:'#textarea', content_css:'public/css/style.css'});</script>
+  		<script>tinymce.init({selector:'#textarea', content_css:'public/css/style.css', resize: false});</script>
 		
 		<!-- Font Awesome -->
 		<script src="https://use.fontawesome.com/b4858dacdf.js"></script>
@@ -102,9 +100,10 @@
 		<script src="https://unpkg.com/esri-leaflet-geocoder"></script>
 
 	    <!-- Script -->
+
 	    <script type="text/javascript" src="public/js/animation.js"></script>
 	    <script type="text/javascript" src="public/js/classLeaflet.js"></script>
-   		
-        
+	    <script type="text/javascript" src="public/js/classFormValidation.js"></script>
+	    	  
 	</body>
 </html>

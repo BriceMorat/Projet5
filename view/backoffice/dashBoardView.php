@@ -2,7 +2,7 @@
 
 <?php ob_start(); ?>
 
-<section class="container">
+<section>
     <div id="container" class="jumbotron container border border-dark">
 
         <h1 class="post-h4">Bienvenue <small><?php echo $_SESSION['pseudo']; ?></small></h2>
@@ -15,7 +15,7 @@
     <br/><br/>
 
     <div class="row justify-content-center">
-        <div id="container" class="col-xl-7 jumbotron container border border-dark">
+        <div id="container" class="col-xl-7 col-10 jumbotron border border-dark">
             <h4>Tous vos récits</h4>
             <hr>
             <br/>
@@ -31,25 +31,30 @@
                     </tr>
                 </thead>
 
-                <?php
-                while ($postsUser = $postsByUser->fetch()) {
-
-                ?>
+                <?php while ($postsUser = $postsByUser->fetch()): ?>
 
                 <tbody>
                     <tr>
-                        <th scope="row" class="my-auto"><a class="text-decoration-none text-info" href="index.php?action=post&id=<?= $postsUser['id']; ?>"><?= $postsUser['title']; ?></a></th>
-                        <td><h6><?= $postsUser['country'] ?></h6></td>
-                        <td><h6><?= $postsUser['city'] ?></h6></td>
-                        <td><h6><em>le <?= $postsUser['date_fr'] ?></em></h6></td>
+                        <th scope="row" class="my-auto"><a class="text-decoration-none text-info" href="index.php?action=post&id=<?= $postsUser['id']; ?>"><?= htmlspecialchars_decode($postsUser['title']); ?></a></th>
+                        <td><h6><?= htmlspecialchars_decode($postsUser['country']); ?></h6></td>
+                        <td><h6><?= htmlspecialchars_decode($postsUser['city']); ?></h6></td>
+                        <td>
+                            <h6><em>le <?= $postsUser['date_fr'] ?></em></h6>
+                            <?php 
+                                if ($postsUser['date_fr'] < $postsUser['date_update_fr']):
+                                    echo '<p><em>modifié le ' . $postsUser['date_update_fr'] . '</em></p>';
+                                
+                                endif;
+                            ?>
+                        </td>
+                    
                         <td class="text-right">
                             <button type="button" class="btn btn-success mr-1" title="Éditer"><a href="index.php?action=updatePost&id=<?= $postsUser['id']; ?>"><i class="fas fa-edit text-white"></i></a></button>
                             <button type="button" class="removepost btn btn-danger bg-danger" title="Supprimer" data-toggle="modal" data-target="#postModal<?= $postsUser['id']; ?>"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
                 </tbody>
-
-                       
+         
                 <div class="modal fade" id="postModal<?= $postsUser['id']; ?>" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -58,7 +63,7 @@
                                 <button type="button" class="close" data-dismiss="modal"><span>&times</span></button>
                             </div>
                             <div class="modal-body">
-                                <p>Voulez-vous vraiment supprimer l'article <span class="text-info font-weight-bold"><?= $postsUser['title']; ?></span> ?</p>
+                                <p>Voulez-vous vraiment supprimer l'article <span class="text-info font-weight-bold"><?= htmlspecialchars_decode($postsUser['title']); ?></span> ?</p>
                             </div>
                             <div class="modal-footer">
                                 <a class="btn btn-secondary bg-secondary" href="index.php?action=deletePost&id=<?= $postsUser['id']; ?>">Oui</a>
@@ -68,14 +73,12 @@
                     </div>
                 </div>
 
-                <?php
-                }
-                ?>
+                <?php endwhile; ?>
 
             </table>
         </div>
 
-        <div id="container" class="col-xl-4 jumbotron container border border-dark">
+        <div id="container" class="col-xl-4 col-8 jumbotron border border-dark ml-xl-4">
             <h4>Vos informations personnelles</h4>
             <hr>
             <br/>
@@ -105,7 +108,7 @@
                     </div>
                 </div>
                 <div class="form-group text-center">
-                    <button type="submit" name="update-pass" class="btn btn-success">Changer votre mot de passe</button>
+                    <button type="submit" name="update-pass" id="submitForm" class="btn btn-success">Changer votre mot de passe</button>
                 </div>
             </form>
         </div>
