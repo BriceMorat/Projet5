@@ -11,7 +11,7 @@ class LeafletMap {
         this.init();
     }
 
-// ********Initialisation de la carte avec la localisation, les marqueurs et le regroupement des marqueurs********
+//Lat and Lng recovery data with initialization of the map with location, markers and grouping of markers
     init() {
         this.initMap = L.map(this.map, {maxBounds: this.maxBounds}).setView(this.latLng, this.zoom);
         L.tileLayer(this.layer, {minZoom: this.minZoom, maxZoom: this.maxZoom}).addTo(this.initMap);
@@ -35,9 +35,11 @@ class LeafletMap {
                 this.lngInput = document.getElementById('lng');
                 this.latInput.value = this.lat;
                 this.lngInput.value = this.lng;
-                this.submitPost = document.getElementById('submitPost');
+                this.submitPost = document.getElementById('submitForm');
                 this.submitPost.addEventListener('click', () => {
                     this.cityInput.disabled = false;
+                    this.latInput.disabled = false;
+                    this.lngInput.disabled = false;
                 })  
             }
         });   

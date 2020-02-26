@@ -26,10 +26,10 @@ if (flashErrorMessage !== null) {
 // paging management
 
 $(function(){
-	$('.page-link').filter(function() {
+	$('.pageNb').filter(function() {
 		return this.href == location.href}).parent().addClass('active').siblings().removeClass('active');
 
-	$('.page-link').click(function() {
+	$('.pageNb').click(function() {
 		$(this).parent().addClass('active').siblings().removeClass('active');
 	})
 });
@@ -71,7 +71,7 @@ $('.imagesReturnBtn').click(() => {
 
 
 // Zoom Images management
-$(function () {
+$(function() {
 	$('.markerImagesFigure').on('click', function() {
     	if($('.markerImagesFigure').hasClass('zoomed')) {
         	$('.markerImagesFigure').removeClass('zoomed');
@@ -83,8 +83,7 @@ $(function () {
 
 $(function() { 
 	
-	let windowWidth= $(window).width();
-	if(windowWidth < 992){
+	if($(window).width() < 992){
 		$('.markerImagesFigure').on('click', function() {
     		if($('.markerImagesFigure').hasClass('zoomed2')) {
         		$('.markerImagesFigure').removeClass('zoomed2');

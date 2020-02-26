@@ -4,7 +4,7 @@ class Slider {
         this.slides = slides;
         this.slides[this.currentSlide].style.opacity = opacity;
 
-		this.autoSlideMapImages = document.getElementsByClassName('autoSlideImagesFigure');
+		this.autoSlideImages = document.getElementById('autoSlideImages');
         this.playPauseBtn = $('#playPauseBtn');
         this.playBtn = $('.fa-play-circle');
         this.pauseBtn = $('.fa-pause-circle');
@@ -17,39 +17,27 @@ class Slider {
 		this.sliderClick();	
 	}
 
-// ********Slider Automatique tous les 5s********
+//Automatic slider scrolling
 	sliderAutoAnimation() {
-		$(document).ready( () => {
-            for (let i = 0; i < this.autoSlideMapImages.length; i++) {
-
-                this.autoSlideMapImages[i].style.animation = 'slideMapImagesAnimation 10s linear infinite';
-            }
-        });
 
         let playbackState = 0;
         this.playPauseBtn.on('click', () => {
             if (playbackState === 0) {
                 playbackState = 1;
-                for (let i = 0; i < this.autoSlideMapImages.length; i++) {
-                    
-                    this.autoSlideMapImages[i].style.animationPlayState = 'paused';
+                    this.autoSlideImages.style.animationPlayState = 'paused';
                     this.pauseBtn.addClass('visibility');
                     this.playBtn.removeClass("visibility");
-                }
+            
             } else {
                 playbackState = 0;
-                for (let i = 0; i < this.autoSlideMapImages.length; i++) {
-
-                    this.autoSlideMapImages[i].style.animation = 'slideMapImagesAnimation 10s linear infinite';
+                    this.autoSlideImages.style.animation = 'slideMapImagesAnimation 60s linear infinite';
                     this.playBtn.addClass('visibility');
-                    this.pauseBtn.removeClass('visibility');
-                }
+                    this.pauseBtn.removeClass('visibility');    
             }
         });
-
 	}
 
-// ********Contrôle du Slider avec les flèches gauche et droite du clavier********
+//Slider control with the left and right arrows on the keyboard
 	sliderKeyControl() {
 		document.addEventListener("keydown", e => {
 			if (e.key === "ArrowRight") {
@@ -64,7 +52,7 @@ class Slider {
 		});
 	}
 
-// ********Contrôle du Slider au clic de la souris sur les boutons gauche, droit, play et stop********
+//Slider control at the click of the mouse on the left, right, play and stop buttons
 	sliderClick() {
 
 		for (let i = 0; i < this.nextBtn.length; i++) {
@@ -80,14 +68,14 @@ class Slider {
 	    }
 	}
 
-// ********Défilement des slides de gauche à droite********
+//Slide scroll from left to right
 	nextImage() {
 		this.slides[this.currentSlide].style.opacity = '0';
 		this.currentSlide = (this.currentSlide + 1) % this.slides.length;
 		this.slides[this.currentSlide].style.opacity = '1';
 	}
 
-// ********Défilement des slides de droite à gauche********
+//Slide scroll from right to left
 	prevImage() {
 		this.slides[this.currentSlide].style.opacity = '0';
 		this.currentSlide = (this.currentSlide - 1) % this.slides.length;

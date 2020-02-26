@@ -1,7 +1,4 @@
 @keyframes slideMapImagesAnimation {
-	0% {
-    	transform: translateX(0%);
-  }
   	100% {
     	transform: translateX(-100%);
   }
@@ -26,10 +23,9 @@ header nav img {
 	background-color: #008000 !important;
 }
 
-#postModal {
+#postModal, #alert {
 	display: none;
 }
-
 .comment {
 	word-wrap: break-word;
 }
@@ -51,10 +47,23 @@ header nav img {
 	height: 10vh;
 }
 
+#localHour, #temperature {
+	padding-top: 1.9em;
+}
+
+#comment, #textarea {
+	resize: none;
+}
+
+/*---- UserPostImagesView ---- */
+.userImagesDiv, .likedImagesDiv {
+	height: 30vh;
+}
+
 /*---- MapView ---- */
 
 #map2, .markerImagesContainer, .markerImagesFigure {
-	height: 65vh;
+	height: 66vh;
 }
 
 .markerImagesDiv {
@@ -85,13 +94,13 @@ header nav img {
 	height: calc(20vh/3);
 }
 
-.markerImagesContainer img, .autoSlideImagesContainer img, .sliderMapImagesContainer img, .postImagesContainer img {
+.markerImagesContainer img, .autoSlideImagesContainer img, .sliderMapImagesContainer img, .postImagesContainer img, .userImagesContainer img, .likedImagesContainer img {
 	min-width: 100%;
 	height: 100%;
-	object-fit: cover;
+	object-fit: contain;
 }
 
-#map2, #map1, #container, .carousel-inner, .btn, figure, figcaption, .autoSlideImagesDiv img, .mdb-lightbox {
+#map2, #map1, #container, .carousel-inner, .btn, figure, figcaption, img {
 	border-radius: 7px;
 }
 
@@ -164,6 +173,10 @@ header nav img {
 	border-color: transparent transparent transparent #404040;
 }
 
+#autoSlideImages {
+	animation: slideMapImagesAnimation 60s linear infinite;
+}
+
 /*---- CreatePostView ---- */
 #map1 {
     min-height: 30vh;
@@ -177,6 +190,19 @@ header nav img {
 	visibility: hidden;
 }
 
+/*---- UpdatePostView ---- */
+.imgUpdate {
+	width: 10vh;
+	height: 10vh;
+}
+
+.removeImage {
+	right: 2.5vh;
+	top: 4vh;
+	color: #B20000;
+	cursor: pointer;
+}
+
 /*MEDIA QUERIES*/
 @media all and (min-width: 768px) and (max-width: 991px) {
 	.markerImagesContainer {
@@ -186,7 +212,7 @@ header nav img {
 }
 
 
-@media all and (max-width: 768px) {
+@media all and (max-width: 767px) {
 
 	.autoSlideImagesContainer, .sliderReturnBtn {
 		display: none;
@@ -222,16 +248,6 @@ header nav img {
 	figcaption p {
 		font-size: 1em !important;
 	}
-
-/*	.alert-btn {
-		justify-content: center;
-		display: flex;
-	}
-
-	.send-btn {
-		display: block;
-		margin: 0 auto;
-	}*/
 
 	.g-recaptcha {
 		margin-top: 2em;
