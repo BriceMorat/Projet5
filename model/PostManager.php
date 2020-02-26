@@ -22,18 +22,18 @@ class PostManager extends Manager {
 
 	* @param $content string
 
-	* @param $author_id integer
+	* @param $authorId integer
 
 	* @param $author string
 
 	* return string
 
 	**/
-	public function createPost(string $title, string $country, string $city, string $content, int $author_id, string $author) {
+	public function createPost(string $title, string $country, string $city, string $content, int $authorId, string $author) {
 		$db = $this->dbConnect();
 
 		$req = $db->prepare('INSERT INTO post(post.title, country, city, content, post.author_id, author, date_creation, date_update) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())');
-		$newPost = $req->execute([$title, $country, $city, $content, $author_id, $author]);
+		$newPost = $req->execute([$title, $country, $city, $content, $authorId, $author]);
 
 		return $newPost;	
 	}
@@ -67,14 +67,10 @@ class PostManager extends Manager {
 	**/
 	public function deletePost(int $postId) {
 		$db = $this->dbConnect();
-		$img = $db->prepare('DELETE FROM image WHERE post_id = '.$postId.'');
-		$comment = $db->prepare('DELETE FROM comment WHERE post_id = '.$postId.'');
-		if ($img->execute() && $comment->execute()) {
-			$request = $db->prepare('DELETE FROM post WHERE id = ? LIMIT 1');
-			$deletedPost = $request->execute([$postId]);
+		$req = $db->prepare('DELETE FROM post WHERE id = ? LIMIT 1');
+		$deletedPost = $req->execute([$postId]);
 
-			return $deletedPost;
-		}
+		return $deletedPost;
 	}
 
 	/**
@@ -104,7 +100,7 @@ class PostManager extends Manager {
 	**/
 	public function getPosts(int $currentPage, int $postsPerPage) {
 		$db = $this->dbConnect();
-		$posts = $db->query('SELECT post.id, title, country, city, content, post.author_id, author, DATE_FORMAT(date_creation, \'%d/%m/%Y à %H:%i\') AS date_fr, DATE_FORMAT(date_update, \'%d/%m/%Y à %H:%i\') AS date_update_fr, image.file_name FROM post INNER JOIN image ON post.id = image.post_id GROUP BY image.post_id ORDER BY post.date_creation DESC LIMIT '.$currentPage.','.$postsPerPage.'');
+		$posts = $db->query('SELECT post.id, title, country, city, content, post.author_id, author, DATE_FORMAT(date_creation, \'%d/%m/%Y à %H:%i\') AS date_fr, DATE_FORMAT(date_update, \'%d/%m/%Y à %H:%i\') AS date_update_fr, COUNT(image.post_id) as images_nb, image.file_name FROM post INNER JOIN image ON post.id = image.post_id GROUP BY image.post_id ORDER BY post.date_creation DESC LIMIT '.$currentPage.','.$postsPerPage.'');
 
 		return $posts;
 	}

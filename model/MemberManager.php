@@ -106,15 +106,15 @@ class MemberManager extends Manager {
 
 	/**
 
-	* @param $author_id integer
+	* @param $authorId integer
 
 	* return string
 
 	**/
-	public function getMember(int $author_id) {
+	public function getMember(int $authorId) {
 		$db = $this->dbConnect();
 		$req = $db->prepare('SELECT id, role, pseudo, email, DATE_FORMAT(registration_date, "%d/%m/%Y") AS reg_date FROM member WHERE id = ?');
-		$req->execute([$author_id]);
+		$req->execute([$authorId]);
 		$member = $req->fetch(\PDO::FETCH_ASSOC);
 		return $member;
 	}

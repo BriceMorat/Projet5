@@ -15,23 +15,32 @@ class ImageManager extends Manager {
 
 	/**
 
-	* @param $author_id integer
+	* @param $authorId integer
 
 	* @param $filename string
 
 	* return string
 
 	**/ 
-	public function addImage(int $author_id, $filename) {
+	public function addImage(int $authorId, string $filename) {
 		$db = $this->dbConnect();
 		
 		$req = $db->prepare('INSERT INTO image(post_id, author_id, file_name) VALUES ((SELECT MAX(id) FROM post), ?, ?)');
 
-		$newImage = $req->execute([$author_id, $filename]);
+		$newImage = $req->execute([$authorId, $filename]);
 
 		return $newImage;
 	}
 
+	/**
+
+	* @param $imageId integer
+
+	* @param $userId integer
+
+	* return integer
+
+	**/ 
 	public function recordImageLikes($imageId, $userId) {
 		$db = $this->dbConnect();
 		
@@ -45,15 +54,26 @@ class ImageManager extends Manager {
 	public function getNbImgLikes() {
 		$db = $this->dbConnect();
 
-		$nbImgLikes = $db->query('SELECT COUNT(image_id) AS img_likes, file_name FROM liked_img INNER JOIN image ON liked_img.image_id = image.id GROUP BY image_id ASC LIMIT 10');
+		$nbImgLikes = $db->query('SELECT COUNT(image_id) AS img_likes, file_name FROM liked_img INNER JOIN image ON liked_img.image_id = image.id GROUP BY image_id ORDER BY img_likes DESC LIMIT 10');
 
 		return $nbImgLikes;
 	}
 
-	public function updateImage($filename, $postId) {
+	/**
+
+	* @param $postId integer
+
+	* @param $authorId integer
+
+	* @param $filename string
+
+	* return string
+
+	**/ 
+	public function updateImage(int $postId, int $authorId, string $filename) {
 		$db = $this->dbConnect();
-		$req = $db->prepare('UPDATE image SET file_name = ? WHERE post_id = ?');
-		$updatedImage = $req->execute([$filename, $postId]);
+		$req = $db->prepare('INSERT INTO image(post_id, author_id, file_name) VALUES (?, ?, ?)');
+		$updatedImage = $req->execute([$postId, $authorId, $filename]);
 
 		return $updatedImage;
 	}
@@ -66,7 +86,7 @@ class ImageManager extends Manager {
 	* return string
 
 	**/
-	public function getPostImages($postId) {
+	public function getPostImages(int $postId) {
 		$db = $this->dbConnect();
 		$postImages = $db->prepare('SELECT * FROM image INNER JOIN post ON image.post_id = post.id WHERE post_id = ?');
 		$postImages->execute([$postId]);
@@ -81,7 +101,7 @@ class ImageManager extends Manager {
 	* return string
 
 	**/
-	public function getUserPostImages($authorId) {
+	public function getUserPostImages(int $authorId) {
 	$db = $this->dbConnect();
 	$userPostImages = $db->prepare('SELECT * FROM image INNER JOIN post ON image.post_id = post.id WHERE image.author_id = ?');
 	$userPostImages->execute([$authorId]);
@@ -89,11 +109,12 @@ class ImageManager extends Manager {
 	return $userPostImages;
 	}
 
-	public function getImages() {
+	public function getUserImages(int $postId) {
 		$db = $this->dbConnect();
-		$images = $db->query('SELECT COUNT(*) AS images_nb, file_name FROM image INNER JOIN post ON image.post_id = post.id GROUP BY post_id ORDER BY images_nb DESC');
+		$userImages = $db->prepare('SELECT * FROM image WHERE image.post_id = ?');
+		$userImages->execute([$postId]);
 
-		return $images;
+		return $userImages;
 	}
 
 	public function getMarkerImages() {
@@ -115,6 +136,31 @@ class ImageManager extends Manager {
 		$sliderMapImages = $db->query('SELECT image.id, post_id, file_name, title, country, city, author, date_creation FROM image INNER JOIN post ON image.post_id = post.id LIMIT 20');
 	
 		return $sliderMapImages;
+	}
+
+	/**
+	
+	* @param $imageId integer
+
+	* return string
+
+	**/
+	public function deleteImage(int $imageId) {
+		$db = $this->dbConnect();
+
+		$request = $db->prepare('SELECT file_name FROM image WHERE id = ?');
+
+		$request->execute([$imageId]);
+		$fileNames = $request->fetch(\PDO::FETCH_ASSOC);
+
+		foreach ($fileNames as $fileName):
+			unlink("public/upload_img/".$fileName);
+		endforeach;
+
+		$req = $db->prepare('DELETE FROM image WHERE id = ?');
+		$deletedImage = $req->execute([$imageId]);
+
+		return $deletedImage;
 	}
 
 }
